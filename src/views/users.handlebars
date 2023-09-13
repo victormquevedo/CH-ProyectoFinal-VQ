@@ -1,0 +1,79 @@
+<div class='card-container' style='display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-block: 20px'>
+  {{#each users}}
+    <div class='card' style='width: 18rem'>
+      <div class='card-body' style='display: flex; flex-direction: column'>
+        {{#if this.first_name}}<h5 class='card-title'>{{this.first_name}}</h5>{{else}}<h5 class='card-title'><i>NO NAME</i></h5>{{/if}}
+        <p class='card-text' style='font-size: 14px;'>{{this.email}}</p>
+        <p class='card-text' id='role' style='font-weight: bold; color: darkblue; font-size: 24px; text-transform: uppercase'>{{this.role}}</p>
+        <p class='card-text' style='text-transform: uppercase; color: gray; font-size: 12px'>CART ID: {{this.cartId}}</p>
+        <div style='display: flex; justify-content: space-between'>
+          <button class='convertUsers btn btn-primary' data-id={{this.id}}>Convert</button>
+          <button class='removeUsers btn btn-danger' data-id={{this.id}}>Remove</button>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>
+
+<script>
+
+  const convertUsers = document.getElementsByClassName('convertUsers')
+  const removeUsers = document.getElementsByClassName('removeUsers')
+
+  const convertUserAction = async (e) => {
+    const card = e.target.closest('.card');
+    let roleElement
+    if (card) {
+      roleElement = card.querySelector('#role');
+    }
+    if (roleElement.textContent === 'admin') return
+    const userId = e.target.getAttribute('data-id')
+    try {
+      const result = await fetch(`${"{{baseUrl}}"}/api/users/premium/${userId}`, {
+      method: 'POST'
+    });
+      if (result.ok) {
+        if (roleElement) {
+          if (roleElement.textContent === 'premium') {
+            roleElement.textContent = 'user'
+          } else {
+            roleElement.textContent = 'premium'
+          }
+        }
+      }
+    } catch (err) {
+      throw new Error(error)
+    }
+  }
+
+  Array.from(convertUsers).forEach(async button => {
+    button.addEventListener('click', convertUserAction)
+  })
+
+  const removeUserAction = async (e) => {
+    const card = e.target.closest('.card');
+    let roleElement
+    if (card) {
+      roleElement = card.querySelector('#role');
+    }
+    if (roleElement.textContent === 'admin') return
+    const userId = e.target.getAttribute('data-id')
+    try {
+      const result = await fetch(`${"{{baseUrl}}"}/api/users/user/${userId}`, {
+      method: 'DELETE'
+    });
+      if (result.ok) {
+        if (card) {
+          card.remove();
+        }
+      }
+    } catch (err) {
+      throw new Error(error)
+    }
+  }
+
+  Array.from(removeUsers).forEach(async button => {
+    button.addEventListener('click', removeUserAction)
+  })
+
+</script>

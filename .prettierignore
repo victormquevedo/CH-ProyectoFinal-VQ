@@ -1,0 +1,9 @@
+realTimeProducts.handlebars
+messages.handlebars
+products.handlebars
+register.handlebars
+cart.handlebars
+passwordRestore.handlebars
+users.handlebars
+checkoutSuccess.handlebars
+checkoutCancel.handlebars

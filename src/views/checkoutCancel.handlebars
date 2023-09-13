@@ -1,0 +1,10 @@
+<div class='d-flex justify-content-between p-3' style='background-color: #f1f1f1'>
+  <a class='btn btn-primary' id='home-button'><i class='fa fa-home fa-fw'></i> Home</a>
+</div>
+<div class='d-flex justify-content-center align-items-center' style='background-color: #ff0000; height: 100px; font-weight: bold' id='purchase-message'>COMPRA CANCELADA</div>
+
+<script>
+  document.getElementById('home-button').addEventListener('click', function() {
+    window.location.href = '{{baseUrl}}/home/products';
+  });
+</script>

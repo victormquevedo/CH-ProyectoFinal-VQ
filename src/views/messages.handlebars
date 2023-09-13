@@ -1,0 +1,89 @@
+<div class='row justify-content-md-center m-4'>
+  <header class='mb-4'>
+    <div class='form-group'>
+      <label for='user_email'>Enter your e-mail:</label>
+      <input id='user_email' type='email' class='form-control' aria-describedby='emailHelp' placeholder='Email' required='required' style='max-width: 250px;' />
+    </div>
+  </header>
+
+  <div id='chat-container' style='max-height: 60vh; overflow-y: scroll'>
+    {{#each messages}}
+      <div class='card mb-2'>
+        <div class='card-body'>
+          <span class='text-primary font-weight-bold'>{{user}}:</span>
+          <span>{{message}}</span>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  <div id='message_input_container' class='mt-4'>
+    <div class='input-group'>
+      <input id='new_message_input' class='form-control' style='max-width: 450px;' />
+      <div class='input-group-append'>
+        <button id='submit_message' class='btn btn-primary ms-4'>Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js'></script>
+<script>
+
+   document.getElementById('user_email').focus();
+
+  const ws = io("{{wsUrl}}");
+  ws.on('connect', () => {
+    ws.on('server_confirm', (msg) => {
+        console.log(msg);
+    });
+  });
+
+  const userEmail = document.getElementById('user_email');
+  const chatContainer = document.getElementById('chat-container');
+  const messageInputContainer = document.getElementById('message_input_container');
+  const newMessageInput = document.getElementById('new_message_input');
+  const submitMessage = document.getElementById('submit_message');
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  submitMessage.addEventListener('click', async () => {
+    if (newMessageInput.value.trim().length > 0) {
+      const message = {
+        user: userEmail.value,
+        message: newMessageInput.value
+      };
+      try {
+        const response = await fetch(`${"{{baseUrl}}"}/api/messages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(message)
+        });
+        if (response.ok) {
+          newMessageInput.value = '';
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        }
+      } catch (error) {
+        throw new Error(error)
+      }
+    }
+  });
+
+  ws.on('message_received', ({ user, message }) => {
+    const newMessage = `
+      <div class="card mb-2">
+        <div class="card-body">
+          <span class='text-primary font-weight-bold'>${user}:</span>
+          <span>${message}</span>
+        </div>
+      </div>
+    `;
+    chatContainer.innerHTML += newMessage;
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  });
+
+</script>

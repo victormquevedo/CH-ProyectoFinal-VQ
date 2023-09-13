@@ -1,0 +1,38 @@
+<div class='d-flex p-3' style='background-color: #f1f1f1'>
+  <a class='btn btn-success' id='checkout-button' style='margin-left: auto'><i class='fa fa-shopping-bag' aria-hidden='true'></i> Checkout</a>
+</div>
+
+
+<div class='container' style='margin-top: 20px'>
+  <h1>CART</h1>
+  <div class='d-flex flex-column mb-3 gap-3' id='cart-data'>
+    {{#each cart}}
+      <div class='d-flex flex-row mb-10'>
+        <img src='{{this.thumbnails}}' class='me-4 w-3' alt='Product image' style='height: 150px; width: 150px;object-fit: cover;' />
+        <div class='w-70'>
+          <h5>{{title}}</h5>
+          <p style='font-weight: bold; font-size: 24px;'>{{price}} USD</p>
+          <p>Quantity: {{quantity}} unit/s</p>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+<script>
+
+  document.getElementById('checkout-button').addEventListener('click', async function() {
+    try {
+      const response = await fetch(`${"{{baseUrl}}"}/api/carts/${"{{cartId}}"}/purchase/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const responseData = await response.json();
+      window.location.href = responseData.url
+    } catch (error) {
+      throw new Error(error)
+    }
+  });
+</script>

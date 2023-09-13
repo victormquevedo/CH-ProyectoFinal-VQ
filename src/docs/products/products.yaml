@@ -1,0 +1,243 @@
+paths:
+  /api/products:
+    get:
+      summary: Retrieve a paginated list of products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/PaginatedProductList'
+        '401':
+          description: 'Unauthorized for the requested endpoint'
+        '498':
+          description: 'Invalid credentials'
+        '500':
+          description: 'Database or Internal server execution error'
+    post:
+      summary: Add a new product to the list
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#components/schemas/Product'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/MessageReturnWithId'
+        '401':
+          description: 'Unauthorized for the requested endpoint'
+        '498':
+          description: 'Invalid credentials'
+        '500':
+          description: 'Database or Internal server execution error'
+  /api/products/{pid}:
+    get:
+      summary: Retrieve product details by its id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          description: Product own id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/Product'
+
+        '498':
+          description: 'Invalid credentials'
+        '500':
+          description: 'Database or Internal server execution error'
+    put:
+      summary: 'Updates a product details by its id'
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          description: Product own id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#components/schemas/Product'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/MessageReturn'
+        '401':
+          description: 'Unauthorized for the requested endpoint'
+        '498':
+          description: 'Invalid credentials'
+        '500':
+          description: 'Database or Internal server execution error'
+    delete:
+      summary: 'Deletes a product due to its ID'
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          description: Product own id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#components/schemas/MessageReturn'
+        '401':
+          description: 'Unauthorized for the requested endpoint'
+        '498':
+          description: 'Invalid credentials'
+        '500':
+          description: 'Database or Internal server execution error'
+
+components:
+  schemas:
+    PaginatedProductList:
+      type: object
+      properties:
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        totalPages:
+          type: number
+        page:
+          type: number
+        hasPrevPage:
+          type: boolean
+        hasNextPage:
+          type: boolean
+        prevPage:
+          type: number
+        nextPage:
+          type: number
+        prevLink:
+          type: string
+        nextLink:
+          type: string
+        status:
+          type: string
+      example:
+        payload:
+          - _id: 648f4e5959152c53055eccb4,
+            id: 9,
+            title: Mochila,
+            description: Para que lleves todo lo escencial,
+            code: O-BP5,
+            price: 48000,
+            status: true,
+            stock: 74,
+            category: Salidas,
+            thumbnails:
+              - https://images.unsplash.com/photo-1499803270242-467f7311582d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1373&q=80
+              - https://images.unsplash.com/photo-1622260614153-03223fb72052?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80
+              - https://images.unsplash.com/photo-1580087256394-dc596e1c8f4f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80
+            owner: lio_messi@gmail.com
+        totalPages: 2
+        page: 1
+        hasPrevPage: false
+        hasNextPage: true
+        prevPage: null
+        nextPage: 2
+        prevLink: null
+        nextLink: /api/products?page=2
+        status: success
+    Product:
+      type: object
+      properties:
+        _id:
+          type: object
+          description: Mongoose ObjectId
+        id:
+          type: number
+          description: Own id
+        title:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+          description: Internal marketplace code
+        price:
+          type: number
+        status:
+          type: boolean
+        stock:
+          type: number
+        category:
+          type: string
+          description: category of the product
+        thumbnails:
+          type: array
+          items:
+            type: string
+          description: urls for the images of the products
+        owner:
+          type: string
+          description: The email direction of the product's owner
+      example:
+        _id: 648f4e5959152c53055eccb4,
+        id: 9,
+        title: Mochila,
+        description: Para que lleves todo lo escencial,
+        code: O-BP5,
+        price: 48000,
+        status: true,
+        stock: 74,
+        category: Salidas,
+        thumbnails:
+          - https://images.unsplash.com/photo-1499803270242-467f7311582d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1373&q=80
+          - https://images.unsplash.com/photo-1622260614153-03223fb72052?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80
+          - https://images.unsplash.com/photo-1580087256394-dc596e1c8f4f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80
+        owner: lio_messi@gmail.com
+    MessageReturnWithId:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Product own id
+        message:
+          type: string
+          description: success message
+      example:
+        id: 15
+        description: Action successful
+    MessageReturn:
+      type: object
+      properties:
+        message:
+          type: string
+          description: success message
+      example:
+        message: Action successful
