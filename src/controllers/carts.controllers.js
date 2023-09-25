@@ -112,7 +112,7 @@ export const purchase = async (req, res, next, baseUrl) => {
           product_data: {
             name: product.title
           },
-          currency: 'usd',
+          currency: 'USD',
           unit_amount: unitPrice * 100
         },
         quantity: cv.quantity
